@@ -6,6 +6,6 @@
         "ghcr.io/devcontainers/features/go:1": {
             "version": "1.18"
         },
-        "./local-features/kubectl-kind": "latest"
+        "./kubectl-kind": "latest"
     }
 }
