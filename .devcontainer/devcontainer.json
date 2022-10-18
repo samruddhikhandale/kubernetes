@@ -31,7 +31,11 @@
 		"ghcr.io/devcontainers/features/go:1": {
 			"version": "1.19"
 		},
-		"./kubectl-kind": "0.16"
+		"ghcr.io/devcontainers/features/sshd:1": {
+			"version": "latest"
+		},		
+	  "./kubectl-kind": "0.16",
+          "./etcd": "latest"
 	},
 	"postCreateCommand": "git config codespaces-theme.hide-status 1",
 	"customizations": {
