@@ -8,6 +8,7 @@
 		// Use bullseye on local arm64/Apple Silicon.
 		"args": { "VARIANT": "bullseye" }
 	},
+	// Ensure that the host machine has enough resources to build and test Kubernetes
 	"hostRequirements": { "cpus": 8},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -21,6 +22,11 @@
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
+
+	// for Kubernetes testing, suppress meaningless forwarding messages
+	"otherPortsAttributes": {"onAutoForward": "silent"},
+
+	// install utils, docker-in-docker, go and other tools
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:1": {
 			"version": "latest"
@@ -33,11 +39,21 @@
 		},
 		"ghcr.io/devcontainers/features/sshd:1": {
 			"version": "latest"
-		},		
-	  "./kubectl-kind": "0.16",
-          "./etcd": "latest"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest"
+		},
+		"./kubectl-kind": "0.16",
+    	"./etcd": "latest"
 	},
-	"postCreateCommand": "git config codespaces-theme.hide-status 1",
+	// setup the command prompt, and install kubetest2-kind
+	"postCreateCommand": [
+		"git config codespaces-theme.hide-status 1",
+		"go install sigs.k8s.io/kubetest2/kubetest2-kind@latest" ,
+		"go install sigs.k8s.io/kubetest2/kubetest2-tester-ginko@latest"
+	],
+
+	// open up the getting started document in the editor
 	"customizations": {
         "codespaces": {
             "openFiles": [
