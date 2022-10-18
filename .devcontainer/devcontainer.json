@@ -37,7 +37,7 @@
 	"customizations": {
         "codespaces": {
             "openFiles": [
-                "README.md"
+                "getting-started-with-codespaces.md"
             ]
         }
     }	
