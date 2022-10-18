@@ -37,6 +37,7 @@ import (
 	"k8s.io/kubernetes/pkg/scheduler/framework"
 	internalqueue "k8s.io/kubernetes/pkg/scheduler/internal/queue"
 	"k8s.io/kubernetes/pkg/scheduler/metrics"
+	"k8s.io/utils/pointer"
 )
 
 const (
@@ -52,8 +53,9 @@ const (
 	permitPlugin                      = "permit-plugin"
 	bindPlugin                        = "bind-plugin"
 
-	testProfileName = "test-profile"
-	nodeName        = "testNode"
+	testProfileName              = "test-profile"
+	testPercentageOfNodesToScore = 35
+	nodeName                     = "testNode"
 
 	injectReason       = "injected status"
 	injectFilterReason = "injected filter status"
@@ -1667,7 +1669,7 @@ func TestFilterPluginsWithNominatedPods(t *testing.T) {
 			podNominator := internalqueue.NewPodNominator(nil)
 			if tt.nominatedPod != nil {
 				podNominator.AddNominatedPod(
-					framework.NewPodInfo(tt.nominatedPod),
+					mustNewPodInfo(t, tt.nominatedPod),
 					&framework.NominatingInfo{NominatingMode: framework.ModeOverride, NominatedNodeName: nodeName})
 			}
 			profile := config.KubeSchedulerProfile{Plugins: cfgPls}
@@ -2287,8 +2289,9 @@ func TestRecordingMetrics(t *testing.T) {
 			stopCh := make(chan struct{})
 			recorder := newMetricsRecorder(100, time.Nanosecond, stopCh)
 			profile := config.KubeSchedulerProfile{
-				SchedulerName: testProfileName,
-				Plugins:       plugins,
+				PercentageOfNodesToScore: pointer.Int32(testPercentageOfNodesToScore),
+				SchedulerName:            testProfileName,
+				Plugins:                  plugins,
 			}
 			f, err := newFrameworkWithQueueSortAndBind(r, profile, stopCh, withMetricsRecorder(recorder))
 			if err != nil {
@@ -2398,8 +2401,9 @@ func TestRunBindPlugins(t *testing.T) {
 			stopCh := make(chan struct{})
 			recorder := newMetricsRecorder(100, time.Nanosecond, stopCh)
 			profile := config.KubeSchedulerProfile{
-				SchedulerName: testProfileName,
-				Plugins:       plugins,
+				SchedulerName:            testProfileName,
+				PercentageOfNodesToScore: pointer.Int32(testPercentageOfNodesToScore),
+				Plugins:                  plugins,
 			}
 			fwk, err := newFrameworkWithQueueSortAndBind(r, profile, stopCh, withMetricsRecorder(recorder))
 			if err != nil {
@@ -2687,4 +2691,12 @@ func collectAndComparePermitWaitDuration(t *testing.T, wantRes string) {
 			t.Errorf("Expect latency to be greater than 0, got: %v", value)
 		}
 	}
+}
+
+func mustNewPodInfo(t *testing.T, pod *v1.Pod) *framework.PodInfo {
+	podInfo, err := framework.NewPodInfo(pod)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return podInfo
 }
