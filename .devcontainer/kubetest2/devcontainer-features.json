@@ -1,0 +1,19 @@
+{
+    "id": "kubetest2",
+    "name": "kubetest2",
+    "options": {
+      "version": {
+        "type": "string",
+        "proposals": [
+          "latest"
+        ],
+        "default": "latest",
+        "description": "Select or enter a version."
+      }
+    },
+    "install": {
+      "app": "",
+      "file": "install.sh"
+    }
+  }
+  
