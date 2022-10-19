@@ -50,9 +50,6 @@
     		"./etcd": "latest",
 		"./kubetest2": {
 			"version": "latest",
-			"installsAfter": [
-				"ghcr.io/devcontainers/features/go:1"
-				]
 		}
 	},
 	// install kubetest2-kind

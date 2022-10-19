@@ -1,6 +1,9 @@
 {
     "id": "kubetest2",
     "name": "kubetest2",
+    "installsAfter": [
+      "ghcr.io/devcontainers/features/go:1"
+      ],
     "options": {
       "version": {
         "type": "string",
