@@ -51,7 +51,7 @@
 		"./kubetest2": {
 			"version": "latest",
 			"installsAfter": [
-				"go"
+				"ghcr.io/devcontainers/features/go:1"
 				]
 		}
 	},
