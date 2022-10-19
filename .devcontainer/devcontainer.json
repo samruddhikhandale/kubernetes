@@ -47,15 +47,13 @@
 			"version": "latest"
 		},
 		"./kubectl-kind": "0.16",
-    	"./etcd": "latest"
+    	"./etcd": "latest",
+		"./kubetest2": "latest"
 	},
-	// install kubetest2-kind
-	"postCreateCommand": [
-		// "git config codespaces-theme.hide-status 1",
-		"go install sigs.k8s.io/kubetest2/...@latest",
-		"go install sigs.k8s.io/kubetest2/kubetest2-kind@latest",
-		"go install sigs.k8s.io/kubetest2/kubetest2-tester-ginko@latest"
-	],
+
+	// "postCreateCommand": [
+	//	 "git config codespaces-theme.hide-status 1",
+	// ],
 
 	// open up the getting started document in the editor
 	"customizations": {
