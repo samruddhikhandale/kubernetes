@@ -22,4 +22,4 @@ rm -rf /var/lib/apt/lists/*
 
 VERSION=${1:-"latest"}
 
-go install sigs.k8s.io/kubetest2/...@
+go install sigs.k8s.io/kubetest2/...@${VERSION}

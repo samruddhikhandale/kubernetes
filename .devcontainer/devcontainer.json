@@ -47,10 +47,8 @@
 			"version": "latest"
 		},
 		"./kubectl-kind": "0.16",
-    		"./etcd": "latest",
-		"./kubetest2": {
-			"version": "latest",
-		}
+    	"./etcd": "latest",
+		"./kubetest2": "latest"
 	},
 	// install kubetest2-kind
 	//"postCreateCommand": [
