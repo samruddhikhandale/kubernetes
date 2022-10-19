@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Only supports Linux
+
 set -e
 
 ETCD_VERSION=${ETCD_VERSION:-3.5.5}
