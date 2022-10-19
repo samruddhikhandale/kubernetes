@@ -40,17 +40,20 @@
 		"ghcr.io/devcontainers/features/sshd:1": {
 			"version": "latest"
 		},
+		"ghcr.io/devcontainers/features/git:1": {
+			"version": "latest"
+		},
 		"ghcr.io/devcontainers/features/github-cli:1": {
 			"version": "latest"
 		},
 		"./kubectl-kind": "0.16",
     	"./etcd": "latest"
 	},
-	// setup the command prompt, and install kubetest2-kind
+	// install kubetest2-kind
 	"postCreateCommand": [
 		// "git config codespaces-theme.hide-status 1",
 		"go install sigs.k8s.io/kubetest2/...@latest",
-		"go install sigs.k8s.io/kubetest2/kubetest2-kind@latest" ,
+		"go install sigs.k8s.io/kubetest2/kubetest2-kind@latest",
 		"go install sigs.k8s.io/kubetest2/kubetest2-tester-ginko@latest"
 	],
 
