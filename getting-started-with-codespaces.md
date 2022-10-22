@@ -83,4 +83,4 @@ The more each project can move configuration and depenencies from documentation 
  - [x]: Document future work plans, current Issues
  - [x]: Add the e2e tests
  - [x]: Validate that the dev container works for locally for VS Code
- - [ ]: Update URL when this branch moves}
+ - [ ]: Move the content to a PR for k/k
