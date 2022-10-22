@@ -2,20 +2,19 @@
 
 To get started, click this [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=codespaces-devcontainer&repo=530261170&machine=premiumLinux&location=WestUs2&devcontainer_path=.devcontainer%2Fdevcontainer.json) and try out some of the commands below.
 
-This fork is the work in progress POC for the PR to k/k
-- This fork is intended to allow anyone creating a codespace from the config to be able to follow all the steps in the community documentation for:
+This fork is the work in progress POC for a PR to k/k ([issue](https://github.com/kubernetes/kubernetes/issues/113019)) and is intended to allow anyone creating a codespace from the config to be able to follow all the steps in the community documentation for:
   - Building: https://github.com/kubernetes/community/blob/master/contributors/devel/README.md (basically you shouldn't have to do any of the setup, you should be able to jump straight to https://github.com/kubernetes/community/blob/master/contributors/devel/development.md#building-kubernetes)
   - Testing: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-testing/testing.md
   - Releasing: https://github.com/kubernetes/sig-release/tree/master/release-engineering
-If you find any gaps, please raise an issue
+If you find any gaps, please raise an [issue](https://github.com/craiglpeters/kubernetes/issues/new/choose)
 
 TO DOs: 
  - [x]: Document the K8s process references for the configurations in the dev container
  - [x]: Document the references dev container configurations
- - [ ]: Explain the principles of Codespaces and the configuration here
- - [ ]: Document future work plans, current Issues
+ - [x]: Explain the principles of Codespaces and the configuration here
+ - [x]: Document future work plans, current Issues
  - [ ]: Add the e2e tests
- - [ ]: Validate that the dev container works for locally for VS Code
+ - [x]: Validate that the dev container works for locally for VS Code
  - [ ]: Update URL when this branch moves}
 
 ## Commands to try
