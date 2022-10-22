@@ -40,6 +40,10 @@ make test-integration
 ```
 
 {Add e2e test running here}
+run Kubtest2 conformance tests with `kind`
+```bash
+kubetest2 kind --up --down --test=ginkgo --focus-regex='\[Conformance\]'
+```
 
 ## Inspiration and principles
 
