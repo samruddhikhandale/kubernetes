@@ -39,10 +39,19 @@ or run them all
 make test-integration
 ```
 
-{Add e2e test running here}
-run Kubtest2 conformance tests with `kind`
+run conformance tests with kubetest2 and `kind`
 ```bash
-kubetest2 kind --up --down --test=ginkgo --focus-regex='\[Conformance\]'
+kubetest2 kind --up --down --test=ginkgo -- --focus-regex='\[Conformance\]'
+```
+
+or maybe performance tests:
+```bash
+kubetest2 kind --up --down --test=ginkgo -- --focus-regex='\[Feature:Performance\]'
+```
+
+you can always run all the tests too:
+```bash
+kubetest2 kind --up --down --test=ginkgo
 ```
 
 ## Inspiration and principles
