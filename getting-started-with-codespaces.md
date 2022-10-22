@@ -8,15 +8,6 @@ This fork is the work in progress POC for a PR to k/k ([issue](https://github.co
   - Releasing: https://github.com/kubernetes/sig-release/tree/master/release-engineering
 If you find any gaps, please raise an [issue](https://github.com/craiglpeters/kubernetes/issues/new/choose)
 
-TO DOs: 
- - [x]: Document the K8s process references for the configurations in the dev container
- - [x]: Document the references dev container configurations
- - [x]: Explain the principles of Codespaces and the configuration here
- - [x]: Document future work plans, current Issues
- - [ ]: Add the e2e tests
- - [x]: Validate that the dev container works for locally for VS Code
- - [ ]: Update URL when this branch moves}
-
 ## Commands to try
 
 Build part of Kubernetes
@@ -76,10 +67,20 @@ The more each project can move configuration and depenencies from documentation 
 - Issue in k/k for adding a dev container https://github.com/kubernetes/kubernetes/issues/113019
 - Issue in Kind for adding a dev container Feature https://github.com/kubernetes-sigs/kind/issues/2967
 
-## What is might come next
+## What might come next
 
 - Create a PR for the dev container in k/k
 - Align with sig-testing on a repo for publishing dev container Features for tools
 - File issues for dev container Features for etcd, kubetest2, and anything else needed
 - Finish the k8s.dev training material
 - GitHub Action to build k8s releases with dev container config
+
+## TO DO
+ 
+ - [x]: Document the K8s process references for the configurations in the dev container
+ - [x]: Document the references dev container configurations
+ - [x]: Explain the principles of Codespaces and the configuration here
+ - [x]: Document future work plans, current Issues
+ - [x]: Add the e2e tests
+ - [x]: Validate that the dev container works for locally for VS Code
+ - [ ]: Update URL when this branch moves}
