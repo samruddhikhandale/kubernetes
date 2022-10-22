@@ -26,6 +26,9 @@
 	// for Kubernetes testing, suppress meaningless forwarding messages
 	"otherPortsAttributes": {"onAutoForward": "silent"},
 
+	// Get the source for kubectl
+	"postCreateCommand": "cd /workspaces ; git clone https://github.com/kubernetes/kubectl",
+
 	// install utils, docker-in-docker, go and other tools
 	"features": {
 		"ghcr.io/devcontainers/features/common-utils:1": {

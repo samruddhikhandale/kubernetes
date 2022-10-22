@@ -3,7 +3,7 @@
 To get started, click this [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=codespaces-devcontainer&repo=530261170&machine=premiumLinux&location=WestUs2&devcontainer_path=.devcontainer%2Fdevcontainer.json) and try out some of the commands below.
 
 This fork is the work in progress POC for a PR to k/k ([issue](https://github.com/kubernetes/kubernetes/issues/113019)) and is intended to allow anyone creating a codespace from the config to be able to follow all the steps in the community documentation for:
-  - Building: https://github.com/kubernetes/community/blob/master/contributors/devel/README.md (basically you shouldn't have to do any of the setup, you should be able to jump straight to https://github.com/kubernetes/community/blob/master/contributors/devel/development.md#building-kubernetes)
+  - Building: https://github.com/kubernetes/community/blob/master/contributors/devel/development.md (basically you shouldn't have to do any of the setup, you should be able to jump straight to https://github.com/kubernetes/community/blob/master/contributors/devel/development.md#building-kubernetes)
   - Testing: https://github.com/kubernetes/community/blob/master/contributors/devel/sig-testing/testing.md
   - Releasing: https://github.com/kubernetes/sig-release/tree/master/release-engineering
 If you find any gaps, please raise an [issue](https://github.com/craiglpeters/kubernetes/issues/new/choose)
