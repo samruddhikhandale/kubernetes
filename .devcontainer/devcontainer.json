@@ -2,64 +2,54 @@
 // https://github.com/devcontainers/images/tree/main/src/base-debian
 {
 	"name": "Debian",
-	"build": {
-		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick an Debian version: bullseye, buster
-		// Use bullseye on local arm64/Apple Silicon.
-		"args": { "VARIANT": "bullseye" }
+	"image": "mcr.microsoft.com/devcontainers/base:0-bullseye",
+
+	// Install utils, docker-in-docker, go and other tools
+	"features": {
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+			"version": "1.19",
+			"helm": "none",
+			"minikube": "none"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "1.19"
+		},
+		"ghcr.io/devcontainers/features/sshd:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"./local-features/kubectl-kind": {},
+		"./local-features/etcd": "latest",
+		"./local-features/kubetest2": "latest"
 	},
+
+	// Copy over welcome message & get the source for kubectl
+	"onCreateCommand": [
+		"run-first-notice.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
+		"cd /workspaces && git clone https://github.com/kubernetes/kubectl"
+	],
+
+	// for Kubernetes testing, suppress meaningless forwarding messages
+	"otherPortsAttributes": {
+		"onAutoForward": "silent"
+	},
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"codespaces": {
+			"openFiles": [
+				"getting-started-with-codespaces.md"
+			]
+		}
+	},
+
 	// Ensure that the host machine has enough resources to build and test Kubernetes
-	"hostRequirements": { "cpus": 8},
+	"hostRequirements": {
+		"cpus": 8
+	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
-	// Uncomment to use the Docker CLI from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker.
-	// "mounts": [ "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" ],
-
-	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
-	"runArgs": [ "--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined" ],
-
-	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode",
-
-	// for Kubernetes testing, suppress meaningless forwarding messages
-	"otherPortsAttributes": {"onAutoForward": "silent"},
-
-	// Get the source for kubectl
-	"postCreateCommand": "cd /workspaces ; git clone https://github.com/kubernetes/kubectl",
-
-	// install utils, docker-in-docker, go and other tools
-	"features": {
-		"ghcr.io/devcontainers/features/common-utils:1": {
-			"version": "latest"
-		},
-		"ghcr.io/devcontainers/features/docker-in-docker:1": {
-			"version": "latest"
-		},
-		"ghcr.io/devcontainers/features/go:1": {
-			"version": "1.19"
-		},
-		"ghcr.io/devcontainers/features/sshd:1": {
-			"version": "latest"
-		},
-		"ghcr.io/devcontainers/features/git:1": {
-			"version": "latest"
-		},
-		"ghcr.io/devcontainers/features/github-cli:1": {
-			"version": "latest"
-		},
-		"./kubectl-kind": "0.16",
-    	"./etcd": "latest",
-		"./kubetest2": "latest"
-	},
-
-	// open up the getting started document in the editor
-	"customizations": {
-        "codespaces": {
-            "openFiles": [
-                "getting-started-with-codespaces.md"
-            ]
-        }
-    }	
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
 }

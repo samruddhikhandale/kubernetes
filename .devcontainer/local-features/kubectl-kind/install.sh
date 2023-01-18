@@ -15,16 +15,12 @@
 
 # only supports Linux
 
-set -e
+set -eux
 
 # Clean up
 rm -rf /var/lib/apt/lists/*
 
-VERSION=${1:-"latest"}
-
-go install sigs.k8s.io/kubetest2/...@${VERSION}
-
-sudo apt-get install apt-transport-https ca-certificates gnupg
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
-sudo apt-get update && sudo apt-get install google-cloud-cli
+# install kind
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.16.0/kind-linux-amd64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind

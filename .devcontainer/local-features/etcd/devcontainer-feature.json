@@ -1,0 +1,14 @@
+{
+  "id": "etcd",
+  "name": "etcd",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": [
+        "latest"
+      ],
+      "default": "3.5.5",
+      "description": "Select or enter a version."
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
-  "id": "etcd",
-  "name": "etcd",
+  "id": "kubetest2",
+  "name": "kubetest2",
   "options": {
     "version": {
       "type": "string",
@@ -11,8 +11,7 @@
       "description": "Select or enter a version."
     }
   },
-  "install": {
-    "app": "",
-    "file": "install.sh"
-  }
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/go"
+  ]
 }

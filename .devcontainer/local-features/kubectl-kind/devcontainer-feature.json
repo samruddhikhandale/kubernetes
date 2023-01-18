@@ -1,0 +1,5 @@
+{
+    "id": "kubectl-kind",
+    "name": "Kubectl kind",
+    "description": "Installs latest version of kubectl kind"
+}

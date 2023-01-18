@@ -17,16 +17,16 @@
 
 set -e
 
-ETCD_VERSION=${ETCD_VERSION:-3.5.5}
+ETCD_VERSION=="${VERSION:-"latest"}"
 
 # Installs etcd in ./third_party/etcd
 url="https://github.com/coreos/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz"
 download_file="etcd-v${ETCD_VERSION}-linux-amd64.tar.gz"
+
 curl -L -o "${download_file}" "${url}"
 tar xzf "${download_file}"
 ln -fns "etcd-v${ETCD_VERSION}-linux-amd64" etcd
 rm "${download_file}"
-
 
 # Installs etcd in /usr/bin so we don't have to futz with the path.
 sudo install -m755 etcd/etcd /usr/local/bin/etcd
