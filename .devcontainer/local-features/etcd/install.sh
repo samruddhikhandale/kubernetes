@@ -15,20 +15,24 @@
 
 # Only supports Linux
 
-set -e
+set -eux
 
-ETCD_VERSION=="${VERSION:-"latest"}"
+ETCD_VERSION="${VERSION:-"3.5.5"}"
+
+apt-get update
+apt-get -y install --no-install-recommends curl tar
 
 # Installs etcd in ./third_party/etcd
-url="https://github.com/coreos/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz"
-download_file="etcd-v${ETCD_VERSION}-linux-amd64.tar.gz"
+echo "Downloading source for ${ETCD_VERSION}..."
 
-curl -L -o "${download_file}" "${url}"
-tar xzf "${download_file}"
-ln -fns "etcd-v${ETCD_VERSION}-linux-amd64" etcd
-rm "${download_file}"
+FILE_NAME="etcd-v${ETCD_VERSION}-linux-amd64.tar.gz"
+curl -sSL -o "${FILE_NAME}" "https://github.com/coreos/etcd/releases/download/v${ETCD_VERSION}/${FILE_NAME}"
+tar xzf "${FILE_NAME}"
+
+mv "etcd-v${ETCD_VERSION}-linux-amd64" /usr/local/etcd
+rm -rf "${FILE_NAME}"
 
 # Installs etcd in /usr/bin so we don't have to futz with the path.
-sudo install -m755 etcd/etcd /usr/local/bin/etcd
-sudo install -m755 etcd/etcdctl /usr/local/bin/etcdctl
-sudo install -m755 etcd/etcdutl /usr/local/bin/etcdutl
+install -m755 /usr/local/etcd/etcd /usr/local/bin/etcd
+install -m755 /usr/local/etcd/etcdctl /usr/local/bin/etcdctl
+install -m755 /usr/local/etcd/etcdutl /usr/local/bin/etcdutl

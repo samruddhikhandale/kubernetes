@@ -7,9 +7,7 @@
 	// Install utils, docker-in-docker, go and other tools
 	"features": {
 		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
-			"version": "1.19",
-			"helm": "none",
-			"minikube": "none"
+			"version": "latest"
 		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/devcontainers/features/go:1": {
@@ -18,14 +16,16 @@
 		"ghcr.io/devcontainers/features/sshd:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"./local-features/kubectl-kind": {},
-		"./local-features/etcd": "latest",
-		"./local-features/kubetest2": "latest"
+		"./local-features/etcd": {},
+		"./local-features/kubetest2": {}  
 	},
 
-	// Copy over welcome message & get the source for kubectl
-	"onCreateCommand": [
-		"run-first-notice.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
-		"cd /workspaces && git clone https://github.com/kubernetes/kubectl"
+	// Copy over welcome message 
+	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
+
+	// Clone the source for kubectl
+	"postCreateCommand": [
+		"git clone --depth=1 https://github.com/kubernetes/kubectl /workspaces"
 	],
 
 	// for Kubernetes testing, suppress meaningless forwarding messages

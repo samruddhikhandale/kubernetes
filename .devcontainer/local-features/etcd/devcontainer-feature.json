@@ -10,5 +10,11 @@
       "default": "3.5.5",
       "description": "Select or enter a version."
     }
-  }
+  },
+  "containerEnv": {
+    "PATH": "/usr/local/etcd:${PATH}"
+  },
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
 }
