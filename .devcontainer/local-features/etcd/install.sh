@@ -60,7 +60,7 @@ apt-get -y install --no-install-recommends curl tar
 find_version_from_git_tags ETCD_VERSION "https://github.com/etcd-io/etcd"
 
 # Installs etcd in ./third_party/etcd
-echo "Downloading source for ${ETCD_VERSION}..."
+echo "Installing etcd ${ETCD_VERSION}..."
 
 architecture="$(uname -m)"
 case $architecture in

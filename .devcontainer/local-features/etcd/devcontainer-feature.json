@@ -1,6 +1,7 @@
 {
   "id": "etcd",
-  "name": "Operating etcd clusters for Kubernetes",
+  "name": "ETCD",
+  "descrption": "Operating etcd clusters for Kubernetes",
   "options": {
     "version": {
       "type": "string",

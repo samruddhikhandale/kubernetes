@@ -1,5 +1,15 @@
 {
     "id": "kubectl-kind",
     "name": "Kubectl kind",
-    "description": "Installs latest version of kubectl kind"
+    "description": "Installs kind - a tool for running local Kubernetes clusters using Docker container 'nodes'",
+    "options": {
+        "version": {
+            "type": "string",
+            "proposals": [
+                "latest"
+            ],
+            "default": "latest",
+            "description": "Select or enter a version."
+        }
+    }
 }
