@@ -56,22 +56,10 @@ find_version_from_git_tags() {
 # Clean up
 rm -rf /var/lib/apt/lists/*
 
-apt-get update
-apt-get -y install --no-install-recommends curl tar
-
-architecture="$(uname -m)"
-case $architecture in
-    x86_64) architecture="amd64";;
-    aarch64 | armv8*) architecture="arm64";;
-    *) echo "(!) Architecture $architecture unsupported"; exit 1 ;;
-esac
-
 # Get closest match for version number specified
 find_version_from_git_tags KIND_VERSION "https://github.com/kubernetes-sigs/kind"
 
 echo "Installing kind ${KIND_VERSION}..."
 
 # Install kind
-curl -Lo ./kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-${architecture}"
-chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
+go install sigs.k8s.io/kind@v${KIND_VERSION}

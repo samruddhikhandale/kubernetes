@@ -11,5 +11,8 @@
             "default": "latest",
             "description": "Select or enter a version."
         }
-    }
+    },
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/go"
+    ]
 }
