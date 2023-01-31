@@ -20,12 +20,12 @@ set -eux
 # Clean up
 rm -rf /var/lib/apt/lists/*
 
-VERSION="${VERSION:-"latest"}"
+echo "Installing kubetest2..."
+go install sigs.k8s.io/kubetest2/...@latest
 
-go install sigs.k8s.io/kubetest2/...@${VERSION}
-
-sudo apt-get install apt-transport-https ca-certificates gnupg
+apt-get update
+apt-get -y install --no-install-recommends curl apt-transport-https ca-certificates gnupg
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
-sudo apt-get update && sudo apt-get install google-cloud-cli
+apt-get update && apt-get install google-cloud-cli
