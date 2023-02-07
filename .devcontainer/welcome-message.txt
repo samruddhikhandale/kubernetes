@@ -1,0 +1,6 @@
+👋 Welcome to Kubernetes on Codespaces! You are on the base Debian image with the kubernetes/kubernetes repo, with Docker, 
+   go, kubectl, kubetest2, kind and etcd installed. 
+
+🔍 To explore VS Code to its fullest, search using the Command Palette (Cmd/Ctrl + Shift + P or F1).
+
+📝 Edit away, run kind and kubectl, and raise issues in the repo if you find any problems.
