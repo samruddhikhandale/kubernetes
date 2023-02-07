@@ -17,7 +17,6 @@ limitations under the License.
 package fixtures
 
 import (
-	"io/ioutil"
 	"os"
 	"strings"
 	"time"
@@ -55,7 +54,7 @@ func StartDefaultServerWithConfigAccess(t servertesting.Logger, flags ...string)
 
 func startDefaultServer(t servertesting.Logger, flags ...string) (func(), servertesting.TestServer, error) {
 	// create kubeconfig which will not actually be used. But authz/authn needs it to startup.
-	fakeKubeConfig, err := ioutil.TempFile("", "kubeconfig")
+	fakeKubeConfig, err := os.CreateTemp("", "kubeconfig")
 	if err != nil {
 		return nil, servertesting.TestServer{}, err
 	}
@@ -144,7 +143,10 @@ func StartDefaultServerWithClientsAndEtcd(t servertesting.Logger, extraFlags ...
 		return nil, nil, nil, nil, "", err
 	}
 
-	RESTOptionsGetter := serveroptions.NewCRDRESTOptionsGetter(*options.RecommendedOptions.Etcd)
+	RESTOptionsGetter, err := serveroptions.NewCRDRESTOptionsGetter(*options.RecommendedOptions.Etcd)
+	if err != nil {
+		return nil, nil, nil, nil, "", err
+	}
 	restOptions, err := RESTOptionsGetter.GetRESTOptions(schema.GroupResource{Group: "hopefully-ignored-group", Resource: "hopefully-ignored-resources"})
 	if err != nil {
 		return nil, nil, nil, nil, "", err

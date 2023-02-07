@@ -132,6 +132,8 @@ type ScheduleResult struct {
 	EvaluatedNodes int
 	// The number of nodes out of the evaluated ones that fit the pod.
 	FeasibleNodes int
+	// The nominating info for scheduling cycle.
+	nominatingInfo *framework.NominatingInfo
 }
 
 // WithComponentConfigVersion sets the component config version to the
@@ -304,6 +306,10 @@ func New(client clientset.Interface,
 		return nil, errors.New("at least one profile is required")
 	}
 
+	preEnqueuePluginMap := make(map[string][]framework.PreEnqueuePlugin)
+	for profileName, profile := range profiles {
+		preEnqueuePluginMap[profileName] = profile.PreEnqueuePlugins()
+	}
 	podQueue := internalqueue.NewSchedulingQueue(
 		profiles[options.profiles[0].SchedulerName].QueueSortFunc(),
 		informerFactory,
@@ -312,6 +318,7 @@ func New(client clientset.Interface,
 		internalqueue.WithPodNominator(nominator),
 		internalqueue.WithClusterEventMap(clusterEventMap),
 		internalqueue.WithPodMaxInUnschedulablePodsDuration(options.podMaxInUnschedulablePodsDuration),
+		internalqueue.WithPreEnqueuePluginMap(preEnqueuePluginMap),
 	)
 
 	schedulerCache := internalcache.New(durationToExpireAssumedPod, stopEverything)
@@ -420,7 +427,7 @@ func buildExtenders(extenders []schedulerapi.Extender, profiles []schedulerapi.K
 	return fExtenders, nil
 }
 
-type FailureHandlerFn func(ctx context.Context, fwk framework.Framework, podInfo *framework.QueuedPodInfo, err error, reason string, nominatingInfo *framework.NominatingInfo)
+type FailureHandlerFn func(ctx context.Context, fwk framework.Framework, podInfo *framework.QueuedPodInfo, status *framework.Status, nominatingInfo *framework.NominatingInfo, start time.Time)
 
 func unionedGVKs(m map[framework.ClusterEvent]sets.String) map[framework.GVK]framework.ActionType {
 	gvkMap := make(map[framework.GVK]framework.ActionType)

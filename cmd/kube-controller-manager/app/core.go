@@ -54,6 +54,7 @@ import (
 	lifecyclecontroller "k8s.io/kubernetes/pkg/controller/nodelifecycle"
 	"k8s.io/kubernetes/pkg/controller/podgc"
 	replicationcontroller "k8s.io/kubernetes/pkg/controller/replication"
+	"k8s.io/kubernetes/pkg/controller/resourceclaim"
 	resourcequotacontroller "k8s.io/kubernetes/pkg/controller/resourcequota"
 	serviceaccountcontroller "k8s.io/kubernetes/pkg/controller/serviceaccount"
 	"k8s.io/kubernetes/pkg/controller/storageversiongc"
@@ -102,6 +103,11 @@ func startNodeIpamController(ctx context.Context, controllerContext ControllerCo
 	// should we start nodeIPAM
 	if !controllerContext.ComponentConfig.KubeCloudShared.AllocateNodeCIDRs {
 		return nil, false, nil
+	}
+
+	// Cannot run cloud ipam controller if cloud provider is nil (--cloud-provider not set or set to 'external')
+	if controllerContext.Cloud == nil && controllerContext.ComponentConfig.KubeCloudShared.CIDRAllocatorType == string(ipam.CloudAllocatorType) {
+		return nil, false, errors.New("--cidr-allocator-type is set to 'CloudAllocator' but cloud provider is not configured")
 	}
 
 	clusterCIDRs, err := validateCIDRs(controllerContext.ComponentConfig.KubeCloudShared.ClusterCIDR)
@@ -354,6 +360,21 @@ func startEphemeralVolumeController(ctx context.Context, controllerContext Contr
 		return nil, true, fmt.Errorf("failed to start ephemeral volume controller: %v", err)
 	}
 	go ephemeralController.Run(ctx, int(controllerContext.ComponentConfig.EphemeralVolumeController.ConcurrentEphemeralVolumeSyncs))
+	return nil, true, nil
+}
+
+const defaultResourceClaimControllerWorkers = 10
+
+func startResourceClaimController(ctx context.Context, controllerContext ControllerContext) (controller.Interface, bool, error) {
+	ephemeralController, err := resourceclaim.NewController(
+		controllerContext.ClientBuilder.ClientOrDie("resource-claim-controller"),
+		controllerContext.InformerFactory.Core().V1().Pods(),
+		controllerContext.InformerFactory.Resource().V1alpha1().ResourceClaims(),
+		controllerContext.InformerFactory.Resource().V1alpha1().ResourceClaimTemplates())
+	if err != nil {
+		return nil, true, fmt.Errorf("failed to start ephemeral volume controller: %v", err)
+	}
+	go ephemeralController.Run(ctx, defaultResourceClaimControllerWorkers)
 	return nil, true, nil
 }
 

@@ -221,7 +221,7 @@ type KubeletConfiguration struct {
 	// Default: true
 	// +optional
 	EnableDebuggingHandlers *bool `json:"enableDebuggingHandlers,omitempty"`
-	// enableContentionProfiling enables lock contention profiling, if enableDebuggingHandlers is true.
+	// enableContentionProfiling enables block profiling, if enableDebuggingHandlers is true.
 	// Default: false
 	// +optional
 	EnableContentionProfiling bool `json:"enableContentionProfiling,omitempty"`
@@ -382,6 +382,12 @@ type KubeletConfiguration struct {
 	// Default: "container"
 	// +optional
 	TopologyManagerScope string `json:"topologyManagerScope,omitempty"`
+	// TopologyManagerPolicyOptions is a set of key=value which allows to set extra options
+	// to fine tune the behaviour of the topology manager policies.
+	// Requires  both the "TopologyManager" and "TopologyManagerPolicyOptions" feature gates to be enabled.
+	// Default: nil
+	// +optional
+	TopologyManagerPolicyOptions map[string]string `json:"topologyManagerPolicyOptions,omitempty"`
 	// qosReserved is a set of resource name to percentage pairs that specify
 	// the minimum percentage of a resource reserved for exclusive use by the
 	// guaranteed QoS tier.
@@ -797,6 +803,18 @@ type KubeletConfiguration struct {
 	// Default: true
 	// +optional
 	LocalStorageCapacityIsolation *bool `json:"localStorageCapacityIsolation,omitempty"`
+
+	// ContainerRuntimeEndpoint is the endpoint of container runtime.
+	// Unix Domain Sockets are supported on Linux, while npipe and tcp endpoints are supported on Windows.
+	// Examples:'unix:///path/to/runtime.sock', 'npipe:////./pipe/runtime'
+	ContainerRuntimeEndpoint string `json:"containerRuntimeEndpoint"`
+
+	// ImageServiceEndpoint is the endpoint of container image service.
+	// Unix Domain Socket are supported on Linux, while npipe and tcp endpoints are supported on Windows.
+	// Examples:'unix:///path/to/runtime.sock', 'npipe:////./pipe/runtime'.
+	// If not specified, the value in containerRuntimeEndpoint is used.
+	// +optional
+	ImageServiceEndpoint string `json:"imageServiceEndpoint,omitempty"`
 }
 
 type KubeletAuthorizationMode string

@@ -33,10 +33,12 @@ import (
 	"k8s.io/apiserver/pkg/storage"
 	storeerr "k8s.io/apiserver/pkg/storage/errors"
 	"k8s.io/apiserver/pkg/util/dryrun"
+	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	policyclient "k8s.io/client-go/kubernetes/typed/policy/v1"
 	podutil "k8s.io/kubernetes/pkg/api/pod"
 	api "k8s.io/kubernetes/pkg/apis/core"
 	"k8s.io/kubernetes/pkg/apis/core/validation"
+	"k8s.io/kubernetes/pkg/features"
 	"k8s.io/kubernetes/pkg/kubelet/client"
 	"k8s.io/kubernetes/pkg/printers"
 	printersinternal "k8s.io/kubernetes/pkg/printers/internalversion"
@@ -71,10 +73,11 @@ type REST struct {
 func NewStorage(optsGetter generic.RESTOptionsGetter, k client.ConnectionInfoGetter, proxyTransport http.RoundTripper, podDisruptionBudgetClient policyclient.PodDisruptionBudgetsGetter) (PodStorage, error) {
 
 	store := &genericregistry.Store{
-		NewFunc:                  func() runtime.Object { return &api.Pod{} },
-		NewListFunc:              func() runtime.Object { return &api.PodList{} },
-		PredicateFunc:            registrypod.MatchPod,
-		DefaultQualifiedResource: api.Resource("pods"),
+		NewFunc:                   func() runtime.Object { return &api.Pod{} },
+		NewListFunc:               func() runtime.Object { return &api.PodList{} },
+		PredicateFunc:             registrypod.MatchPod,
+		DefaultQualifiedResource:  api.Resource("pods"),
+		SingularQualifiedResource: api.Resource("pod"),
 
 		CreateStrategy:      registrypod.Strategy,
 		UpdateStrategy:      registrypod.Strategy,
@@ -221,6 +224,10 @@ func (r *BindingREST) setPodHostAndAnnotations(ctx context.Context, podUID types
 		if pod.Spec.NodeName != "" {
 			return nil, fmt.Errorf("pod %v is already assigned to node %q", pod.Name, pod.Spec.NodeName)
 		}
+		// Reject binding to a scheduling un-ready Pod.
+		if utilfeature.DefaultFeatureGate.Enabled(features.PodSchedulingReadiness) && len(pod.Spec.SchedulingGates) != 0 {
+			return nil, fmt.Errorf("pod %v has non-empty .spec.schedulingGates", pod.Name)
+		}
 		pod.Spec.NodeName = machine
 		if pod.Annotations == nil {
 			pod.Annotations = make(map[string]string)
@@ -280,6 +287,10 @@ func (r *LegacyBindingREST) Create(ctx context.Context, obj runtime.Object, crea
 		return nil, errors.NewBadRequest(fmt.Sprintf("not a Binding object: %T", obj))
 	}
 	return r.bindingRest.Create(ctx, metadata.GetName(), obj, createValidation, options)
+}
+
+func (r *LegacyBindingREST) GetSingularName() string {
+	return "binding"
 }
 
 // StatusREST implements the REST endpoint for changing the status of a pod.

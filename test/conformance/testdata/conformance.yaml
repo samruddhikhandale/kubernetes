@@ -158,7 +158,7 @@
     API Server using the current Aggregator [Conformance]'
   description: Ensure that the sample-apiserver code from 1.17 and compiled against
     1.17 will work on the current Aggregator/API-Server.
-  release: v1.17, v1.21
+  release: v1.17, v1.21, v1.27
   file: test/e2e/apimachinery/aggregator.go
 - testname: Custom Resource Definition Conversion Webhook, convert mixed version list
   codename: '[sig-api-machinery] CustomResourceConversionWebhook [Privileged:ClusterAdmin]
@@ -384,6 +384,14 @@
     MUST cause pods created by that RC to be orphaned.
   release: v1.9
   file: test/e2e/apimachinery/garbage_collector.go
+- testname: Namespace, apply finalizer to a namespace
+  codename: '[sig-api-machinery] Namespaces [Serial] should apply a finalizer to a
+    Namespace [Conformance]'
+  description: Attempt to create a Namespace which MUST be succeed. Updating the namespace
+    with a fake finalizer MUST succeed. The fake finalizer MUST be found. Removing
+    the fake finalizer from the namespace MUST succeed and MUST NOT be found.
+  release: v1.26
+  file: test/e2e/apimachinery/namespace.go
 - testname: Namespace, apply update to a namespace
   codename: '[sig-api-machinery] Namespaces [Serial] should apply an update to a Namespace
     [Conformance]'
@@ -420,6 +428,20 @@
     MUST now include the new Label.
   release: v1.18
   file: test/e2e/apimachinery/namespace.go
+- testname: ResourceQuota, apply changes to a ResourceQuota status
+  codename: '[sig-api-machinery] ResourceQuota should apply changes to a resourcequota
+    status [Conformance]'
+  description: Attempt to create a ResourceQuota for CPU and Memory quota limits.
+    Creation MUST be successful. Updating the hard status values MUST succeed and
+    the new values MUST be found. The reported hard status values MUST equal the spec
+    hard values. Patching the spec hard values MUST succeed and the new values MUST
+    be found. Patching the hard status values MUST succeed. The reported hard status
+    values MUST equal the new spec hard values. Getting the /status MUST succeed and
+    the reported hard status values MUST equal the spec hard values. Repatching the
+    hard status values MUST succeed. The spec spec MUST NOT be changed when patching
+    /status.
+  release: v1.26
+  file: test/e2e/apimachinery/resource_quota.go
 - testname: ResourceQuota, update and delete
   codename: '[sig-api-machinery] ResourceQuota should be able to update and delete
     ResourceQuota. [Conformance]'
@@ -1097,6 +1119,18 @@
     it MUST succeed and the field MUST equal the new value.
   release: v1.26
   file: test/e2e/auth/service_accounts.go
+- testname: SubjectReview, API Operations
+  codename: '[sig-auth] SubjectReview should support SubjectReview API operations
+    [Conformance]'
+  description: A ServiceAccount is created which MUST succeed. A clientset is created
+    to impersonate the ServiceAccount. A SubjectAccessReview is created for the ServiceAccount
+    which MUST succeed. The allowed status for the SubjectAccessReview MUST match
+    the expected allowed for the impersonated client call. A LocalSubjectAccessReviews
+    is created for the ServiceAccount which MUST succeed. The allowed status for the
+    LocalSubjectAccessReview MUST match the expected allowed for the impersonated
+    client call.
+  release: v1.27
+  file: test/e2e/auth/subjectreviews.go
 - testname: Kubectl, guestbook application
   codename: '[sig-cli] Kubectl client Guestbook application should create and stop
     a working application  [Conformance]'
@@ -1156,18 +1190,6 @@
     container MUST verify that the label can be read back. Use 'kubectl label label-'
     to remove the label. 'kubectl get pod' with -l option SHOULD not list the deleted
     label as the label is removed.
-  release: v1.9
-  file: test/e2e/kubectl/kubectl.go
-- testname: Kubectl, logs
-  codename: '[sig-cli] Kubectl client Kubectl logs should be able to retrieve and
-    filter logs  [Conformance]'
-  description: When a Pod is running then it MUST generate logs. Starting a Pod should
-    have a expected log line. Also log command options MUST work as expected and described
-    below. 'kubectl logs -tail=1' should generate a output of one line, the last line
-    in the log. 'kubectl --limit-bytes=1' should generate a single byte output. 'kubectl
-    --tail=1 --timestamp should generate one line with timestamp in RFC3339 format
-    'kubectl --since=1s' should output logs that are only 1 second older from now
-    'kubectl --since=24h' should output logs that are only 1 day older from now
   release: v1.9
   file: test/e2e/kubectl/kubectl.go
 - testname: Kubectl, patch to annotate
@@ -1244,6 +1266,17 @@
     the replicaset to 2. Number of running instances of the Pod MUST be 2.
   release: v1.9
   file: test/e2e/kubectl/kubectl.go
+- testname: Kubectl, logs
+  codename: '[sig-cli] Kubectl logs logs should be able to retrieve and filter logs  [Conformance]'
+  description: When a Pod is running then it MUST generate logs. Starting a Pod should
+    have a expected log line. Also log command options MUST work as expected and described
+    below. 'kubectl logs -tail=1' should generate a output of one line, the last line
+    in the log. 'kubectl --limit-bytes=1' should generate a single byte output. 'kubectl
+    --tail=1 --timestamp should generate one line with timestamp in RFC3339 format
+    'kubectl --since=1s' should output logs that are only 1 second older from now
+    'kubectl --since=24h' should output logs that are only 1 day older from now
+  release: v1.9
+  file: test/e2e/kubectl/logs.go
 - testname: New Event resource lifecycle, testing a list of events
   codename: '[sig-instrumentation] Events API should delete a collection of events
     [Conformance]'
@@ -2450,6 +2483,20 @@
     pod.
   release: v1.19
   file: test/e2e/scheduling/preemption.go
+- testname: CSIInlineVolumes should support Pods with inline volumes
+  codename: '[sig-storage] CSIInlineVolumes should support CSIVolumeSource in Pod
+    API [Conformance]'
+  description: Pod resources with CSIVolumeSource should support create, get, list,
+    patch, and delete operations.
+  release: v1.26
+  file: test/e2e/storage/csi_inline.go
+- testname: CSIInlineVolumes should support ephemeral CSIDrivers
+  codename: '[sig-storage] CSIInlineVolumes should support ephemeral VolumeLifecycleMode
+    in CSIDriver API [Conformance]'
+  description: CSIDriver resources with ephemeral VolumeLifecycleMode should support
+    create, get, list, and delete operations.
+  release: v1.26
+  file: test/e2e/storage/csi_inline.go
 - testname: CSIStorageCapacity API
   codename: '[sig-storage] CSIStorageCapacity  should support CSIStorageCapacities
     API operations [Conformance]'

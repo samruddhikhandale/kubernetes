@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
@@ -241,7 +242,7 @@ func Run(c *config.CompletedConfig, stopCh <-chan struct{}) error {
 
 	// No leader election, run directly
 	if !c.ComponentConfig.Generic.LeaderElection.LeaderElect {
-		ctx, _ := wait.ContextForChannel(stopCh)
+		ctx := wait.ContextForChannel(stopCh)
 		run(ctx, saTokenControllerInitFunc, NewControllerInitializers)
 		return nil
 	}
@@ -387,8 +388,7 @@ func (c ControllerContext) IsControllerEnabled(name string) bool {
 type InitFunc func(ctx context.Context, controllerCtx ControllerContext) (controller controller.Interface, enabled bool, err error)
 
 // ControllerInitializersFunc is used to create a collection of initializers
-//
-//	given the loopMode.
+// given the loopMode.
 type ControllerInitializersFunc func(loopMode ControllerLoopMode) (initializers map[string]InitFunc)
 
 var _ ControllerInitializersFunc = NewControllerInitializers
@@ -422,49 +422,61 @@ const (
 // paired to their InitFunc.  This allows for structured downstream composition and subdivision.
 func NewControllerInitializers(loopMode ControllerLoopMode) map[string]InitFunc {
 	controllers := map[string]InitFunc{}
-	controllers["endpoint"] = startEndpointController
-	controllers["endpointslice"] = startEndpointSliceController
-	controllers["endpointslicemirroring"] = startEndpointSliceMirroringController
-	controllers["replicationcontroller"] = startReplicationController
-	controllers["podgc"] = startPodGCController
-	controllers["resourcequota"] = startResourceQuotaController
-	controllers["namespace"] = startNamespaceController
-	controllers["serviceaccount"] = startServiceAccountController
-	controllers["garbagecollector"] = startGarbageCollectorController
-	controllers["daemonset"] = startDaemonSetController
-	controllers["job"] = startJobController
-	controllers["deployment"] = startDeploymentController
-	controllers["replicaset"] = startReplicaSetController
-	controllers["horizontalpodautoscaling"] = startHPAController
-	controllers["disruption"] = startDisruptionController
-	controllers["statefulset"] = startStatefulSetController
-	controllers["cronjob"] = startCronJobController
-	controllers["csrsigning"] = startCSRSigningController
-	controllers["csrapproving"] = startCSRApprovingController
-	controllers["csrcleaner"] = startCSRCleanerController
-	controllers["ttl"] = startTTLController
-	controllers["bootstrapsigner"] = startBootstrapSignerController
-	controllers["tokencleaner"] = startTokenCleanerController
-	controllers["nodeipam"] = startNodeIpamController
-	controllers["nodelifecycle"] = startNodeLifecycleController
+
+	// All of the controllers must have unique names, or else we will explode.
+	register := func(name string, fn InitFunc) {
+		if _, found := controllers[name]; found {
+			panic(fmt.Sprintf("controller name %q was registered twice", name))
+		}
+		controllers[name] = fn
+	}
+
+	register("endpoint", startEndpointController)
+	register("endpointslice", startEndpointSliceController)
+	register("endpointslicemirroring", startEndpointSliceMirroringController)
+	register("replicationcontroller", startReplicationController)
+	register("podgc", startPodGCController)
+	register("resourcequota", startResourceQuotaController)
+	register("namespace", startNamespaceController)
+	register("serviceaccount", startServiceAccountController)
+	register("garbagecollector", startGarbageCollectorController)
+	register("daemonset", startDaemonSetController)
+	register("job", startJobController)
+	register("deployment", startDeploymentController)
+	register("replicaset", startReplicaSetController)
+	register("horizontalpodautoscaling", startHPAController)
+	register("disruption", startDisruptionController)
+	register("statefulset", startStatefulSetController)
+	register("cronjob", startCronJobController)
+	register("csrsigning", startCSRSigningController)
+	register("csrapproving", startCSRApprovingController)
+	register("csrcleaner", startCSRCleanerController)
+	register("ttl", startTTLController)
+	register("bootstrapsigner", startBootstrapSignerController)
+	register("tokencleaner", startTokenCleanerController)
+	register("nodeipam", startNodeIpamController)
+	register("nodelifecycle", startNodeLifecycleController)
 	if loopMode == IncludeCloudLoops {
-		controllers["service"] = startServiceController
-		controllers["route"] = startRouteController
-		controllers["cloud-node-lifecycle"] = startCloudNodeLifecycleController
+		register("service", startServiceController)
+		register("route", startRouteController)
+		register("cloud-node-lifecycle", startCloudNodeLifecycleController)
 		// TODO: volume controller into the IncludeCloudLoops only set.
 	}
-	controllers["persistentvolume-binder"] = startPersistentVolumeBinderController
-	controllers["attachdetach"] = startAttachDetachController
-	controllers["persistentvolume-expander"] = startVolumeExpandController
-	controllers["clusterrole-aggregation"] = startClusterRoleAggregrationController
-	controllers["pvc-protection"] = startPVCProtectionController
-	controllers["pv-protection"] = startPVProtectionController
-	controllers["ttl-after-finished"] = startTTLAfterFinishedController
-	controllers["root-ca-cert-publisher"] = startRootCACertPublisher
-	controllers["ephemeral-volume"] = startEphemeralVolumeController
+	register("persistentvolume-binder", startPersistentVolumeBinderController)
+	register("attachdetach", startAttachDetachController)
+	register("persistentvolume-expander", startVolumeExpandController)
+	register("clusterrole-aggregation", startClusterRoleAggregrationController)
+	register("pvc-protection", startPVCProtectionController)
+	register("pv-protection", startPVProtectionController)
+	register("ttl-after-finished", startTTLAfterFinishedController)
+	register("root-ca-cert-publisher", startRootCACertPublisher)
+	register("ephemeral-volume", startEphemeralVolumeController)
 	if utilfeature.DefaultFeatureGate.Enabled(genericfeatures.APIServerIdentity) &&
 		utilfeature.DefaultFeatureGate.Enabled(genericfeatures.StorageVersionAPI) {
-		controllers["storage-version-gc"] = startStorageVersionGCController
+		register("storage-version-gc", startStorageVersionGCController)
+	}
+	if utilfeature.DefaultFeatureGate.Enabled(kubefeatures.DynamicResourceAllocation) {
+		controllers["resource-claim-controller"] = startResourceClaimController
 	}
 
 	return controllers
@@ -657,7 +669,6 @@ func (c serviceAccountTokenControllerStarter) startServiceAccountTokenController
 		serviceaccountcontroller.TokensControllerOptions{
 			TokenGenerator: tokenGenerator,
 			RootCA:         rootCA,
-			AutoGenerate:   !utilfeature.DefaultFeatureGate.Enabled(kubefeatures.LegacyServiceAccountTokenNoAutoGeneration),
 		},
 	)
 	if err != nil {
@@ -735,8 +746,7 @@ func leaderElectAndRun(c *config.CompletedConfig, lockIdentity string, electionC
 }
 
 // createInitializersFunc creates a initializersFunc that returns all initializer
-//
-//	with expected as the result after filtering through filterFunc.
+// with expected as the result after filtering through filterFunc.
 func createInitializersFunc(filterFunc leadermigration.FilterFunc, expected leadermigration.FilterResult) ControllerInitializersFunc {
 	return func(loopMode ControllerLoopMode) map[string]InitFunc {
 		initializers := make(map[string]InitFunc)
