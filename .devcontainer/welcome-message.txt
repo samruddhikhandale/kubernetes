@@ -1,8 +1,5 @@
-👋 Welcome to Kubernetes on Codespaces! You are on the base Debian image with the kubernetes/kubernetes repo, with Docker, 
-   go, kubectl, kubetest2 and kind installed. 
-
-- Open getting-startedd-with-codespaces.md to learn more things to do in a Codespace.
-- You can learn more about this repo at https://github.com/craiglpeters/kubernetes/tree/codespaces-devcontainer.
+👋 Welcome to Kubernetes on Codespaces! For more info about Codespaces see https://docs.github.com/en/codespaces
+This environment uses a debian image with the kubernetes/kubernetes repo, with Docker, go, kubectl, kubetest2 and kind installed. For more information about the base image see https://github.com/devcontainers/images/tree/main/src/base-debian
 
 🔍 To explore VS Code to its fullest, search using the Command Palette (Cmd/Ctrl + Shift + P or F1).
 

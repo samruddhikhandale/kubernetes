@@ -5,6 +5,7 @@
 	"image": "mcr.microsoft.com/devcontainers/base:0-bullseye",
 
 	// Install utils, docker-in-docker, go and other tools
+	// For more info about dev container Features see https://containers.dev/features
 	"features": {
 		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
 			"version": "latest",
@@ -30,19 +31,14 @@
 		"cd /workspaces && git clone --depth=1 https://github.com/kubernetes/kubectl"
 	],
 
-	// for Kubernetes testing, suppress meaningless forwarding messages
+	// for Kubernetes testing, suppress extraneous forwarding messages
 	"otherPortsAttributes": {
 		"onAutoForward": "silent"
 	},
 
 	// Configure tool-specific properties.
-	"customizations": {
-		"codespaces": {
-			"openFiles": [
-				"getting-started-with-codespaces.md"
-			]
-		}
-	},
+	// "customizations": {
+	// },
 
 	// Ensure that the host machine has enough resources to build and test Kubernetes
 	"hostRequirements": {
