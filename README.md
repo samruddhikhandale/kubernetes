@@ -40,7 +40,12 @@ The [community repository] hosts all information about
 building Kubernetes from source, how to contribute code
 and documentation, who to contact about what, etc.
 
-If you want to build Kubernetes right away there are two options:
+If you want to build Kubernetes right away there are three options:
+
+##### Use a cloud development environment called GitHub Codespaces
+
+Click the Code button in GitHub, select the Codespaces tab, then click the Create codespace button. This creates a cloud development environment with a clone of kubernetes/kubernetes with go, Docker, and other tools preconfigured.
+> Note: Codespaces will automatically create a fork for you if you attempt to push commits to kubernetes/kubernetes
 
 ##### You have a working [Go environment].
 
