@@ -27,7 +27,7 @@
 
 	// Clone the source for kubectl
 	"postCreateCommand": [
-		"git clone --depth=1 https://github.com/kubernetes/kubectl /workspaces"
+		"cd /workspaces && git clone --depth=1 https://github.com/kubernetes/kubectl"
 	],
 
 	// for Kubernetes testing, suppress meaningless forwarding messages
