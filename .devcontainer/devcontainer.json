@@ -7,7 +7,9 @@
 	// Install utils, docker-in-docker, go and other tools
 	"features": {
 		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
-			"version": "latest"
+			"version": "latest",
+			"helm": "none",
+			"minikube": "none"
 		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/devcontainers/features/go:1": {
