@@ -31,6 +31,7 @@ import (
 	"time"
 
 	"github.com/onsi/ginkgo/v2"
+	"github.com/onsi/ginkgo/v2/reporters"
 	"github.com/onsi/ginkgo/v2/types"
 	"github.com/onsi/gomega"
 	gomegaformat "github.com/onsi/gomega/format"
@@ -115,6 +116,8 @@ type TestContextType struct {
 	OutputDir                   string
 	ReportDir                   string
 	ReportPrefix                string
+	ReportCompleteGinkgo        bool
+	ReportCompleteJUnit         bool
 	Prefix                      string
 	MinStartupPods              int
 	EtcdUpgradeStorage          string
@@ -185,6 +188,13 @@ type TestContextType struct {
 
 	// DockerConfigFile is a file that contains credentials which can be used to pull images from certain private registries, needed for a test.
 	DockerConfigFile string
+
+	// E2EDockerConfigFile is a docker credentials configuration file used which contains authorization token that can be used to pull images from certain private registries provided by the users.
+	// For more details refer https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#log-in-to-docker-hub
+	E2EDockerConfigFile string
+
+	// KubeTestRepoConfigFile is a yaml file used for overriding registries for test images.
+	KubeTestRepoList string
 
 	// SnapshotControllerPodName is the name used for identifying the snapshot controller pod.
 	SnapshotControllerPodName string
@@ -335,7 +345,9 @@ func RegisterCommonFlags(flags *flag.FlagSet) {
 
 	flags.StringVar(&TestContext.Host, "host", "", fmt.Sprintf("The host, or apiserver, to connect to. Will default to %s if this argument and --kubeconfig are not set.", defaultHost))
 	flags.StringVar(&TestContext.ReportPrefix, "report-prefix", "", "Optional prefix for JUnit XML reports. Default is empty, which doesn't prepend anything to the default name.")
-	flags.StringVar(&TestContext.ReportDir, "report-dir", "", "Path to the directory where the JUnit XML reports and other tests results should be saved. Default is empty, which doesn't generate these reports. If ginkgo's -junit-report parameter is used, that parameter instead of -report-dir determines the location of a single JUnit report.")
+	flags.StringVar(&TestContext.ReportDir, "report-dir", "", "Path to the directory where the simplified JUnit XML reports and other tests results should be saved. Default is empty, which doesn't generate these reports.  If ginkgo's -junit-report parameter is used, that parameter instead of -report-dir determines the location of a single JUnit report.")
+	flags.BoolVar(&TestContext.ReportCompleteGinkgo, "report-complete-ginkgo", false, "Enables writing a complete test report as Ginkgo JSON to <report dir>/ginkgo/report.json. Ignored if --report-dir is not set.")
+	flags.BoolVar(&TestContext.ReportCompleteJUnit, "report-complete-junit", false, "Enables writing a complete test report as JUnit XML to <report dir>/ginkgo/report.json. Ignored if --report-dir is not set.")
 	flags.StringVar(&TestContext.ContainerRuntimeEndpoint, "container-runtime-endpoint", "unix:///var/run/containerd/containerd.sock", "The container runtime endpoint of cluster VM instances.")
 	flags.StringVar(&TestContext.ContainerRuntimeProcessName, "container-runtime-process-name", "dockerd", "The name of the container runtime process.")
 	flags.StringVar(&TestContext.ContainerRuntimePidFile, "container-runtime-pid-file", "/var/run/docker.pid", "The pid file of the container runtime.")
@@ -354,7 +366,10 @@ func RegisterCommonFlags(flags *flag.FlagSet) {
 
 	flags.StringVar(&TestContext.ProgressReportURL, "progress-report-url", "", "The URL to POST progress updates to as the suite runs to assist in aiding integrations. If empty, no messages sent.")
 	flags.StringVar(&TestContext.SpecSummaryOutput, "spec-dump", "", "The file to dump all ginkgo.SpecSummary to after tests run. If empty, no objects are saved/printed.")
-	flags.StringVar(&TestContext.DockerConfigFile, "docker-config-file", "", "A file that contains credentials which can be used to pull images from certain private registries, needed for a test.")
+	flags.StringVar(&TestContext.DockerConfigFile, "docker-config-file", "", "A docker credential file which contains authorization token that is used to perform image pull tests from an authenticated registry. For more details regarding the content of the file refer https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#log-in-to-docker-hub")
+
+	flags.StringVar(&TestContext.E2EDockerConfigFile, "e2e-docker-config-file", "", "A docker credentials configuration file used which contains authorization token that can be used to pull images from certain private registries provided by the users. For more details refer https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#log-in-to-docker-hub")
+	flags.StringVar(&TestContext.KubeTestRepoList, "kube-test-repo-list", "", "A yaml file used for overriding registries for test images. Alternatively, the KUBE_TEST_REPO_LIST env variable can be set.")
 
 	flags.StringVar(&TestContext.SnapshotControllerPodName, "snapshot-controller-pod-name", "", "The pod name to use for identifying the snapshot controller in the kube-system namespace.")
 	flags.IntVar(&TestContext.SnapshotControllerHTTPPort, "snapshot-controller-http-port", 0, "The port to use for snapshot controller HTTP communication.")
@@ -458,6 +473,9 @@ func AfterReadingAllFlags(t *TestContextType) {
 
 	// These flags are not exposed via the normal command line flag set,
 	// therefore we have to use our own private one here.
+	if t.KubeTestRepoList != "" {
+		image.Init(t.KubeTestRepoList)
+	}
 	var fs flag.FlagSet
 	klog.InitFlags(&fs)
 	fs.Set("logtostderr", "false")
@@ -545,6 +563,31 @@ func AfterReadingAllFlags(t *TestContextType) {
 	}
 
 	if TestContext.ReportDir != "" {
+		// Create the directory before running the suite. If
+		// --report-dir is not unusable, we should report
+		// that as soon as possible. This will be done by each worker
+		// in parallel, so we will get "exists" error in most of them.
+		if err := os.MkdirAll(TestContext.ReportDir, 0777); err != nil && !os.IsExist(err) {
+			klog.Errorf("Create report dir: %v", err)
+			os.Exit(1)
+		}
+		ginkgoDir := path.Join(TestContext.ReportDir, "ginkgo")
+		if TestContext.ReportCompleteGinkgo || TestContext.ReportCompleteJUnit {
+			if err := os.MkdirAll(ginkgoDir, 0777); err != nil && !os.IsExist(err) {
+				klog.Errorf("Create <report-dir>/ginkgo: %v", err)
+				os.Exit(1)
+			}
+		}
+
+		if TestContext.ReportCompleteGinkgo {
+			ginkgo.ReportAfterSuite("Ginkgo JSON report", func(report ginkgo.Report) {
+				ExpectNoError(reporters.GenerateJSONReport(report, path.Join(ginkgoDir, "report.json")))
+			})
+			ginkgo.ReportAfterSuite("JUnit XML report", func(report ginkgo.Report) {
+				ExpectNoError(reporters.GenerateJUnitReport(report, path.Join(ginkgoDir, "report.xml")))
+			})
+		}
+
 		ginkgo.ReportAfterSuite("Kubernetes e2e JUnit report", func(report ginkgo.Report) {
 			// With Ginkgo v1, we used to write one file per
 			// parallel node. Now Ginkgo v2 automatically merges
@@ -559,9 +602,7 @@ func AfterReadingAllFlags(t *TestContextType) {
 			// needed because the full report can become too large
 			// for tools like Spyglass
 			// (https://github.com/kubernetes/kubernetes/issues/111510).
-			//
-			// Users who want the full report can use `--junit-report`.
-			junit.WriteJUnitReport(report, junitReport)
+			ExpectNoError(junit.WriteJUnitReport(report, junitReport))
 		})
 	}
 }
