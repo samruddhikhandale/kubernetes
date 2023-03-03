@@ -29,3 +29,7 @@ echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.clou
 
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
 apt-get update && apt-get install google-cloud-cli
+
+chown -R "${_REMOTE_USER}:golang" "${GOPATH}"
+chmod -R g+r+w "${GOPATH}"
+find "${GOPATH}" -type d -print0 | xargs -n 1 -0 chmod g+s
