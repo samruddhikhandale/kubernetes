@@ -63,3 +63,7 @@ echo "Installing kind ${KIND_VERSION}..."
 
 # Install kind
 go install sigs.k8s.io/kind@v${KIND_VERSION}
+
+chown -R "${_REMOTE_USER}:golang" "${GOPATH}"
+chmod -R g+r+w "${GOPATH}"
+find "${GOPATH}" -type d -print0 | xargs -n 1 -0 chmod g+s
