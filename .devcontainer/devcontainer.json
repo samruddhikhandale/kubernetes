@@ -3,7 +3,6 @@
 {
 	"name": "Debian",
 	"image": "mcr.microsoft.com/devcontainers/base:0-bullseye",
-	"workspaceFolder": "$GOPATH/src/k8s.io/kubernetes",
 
 	// Install utils, docker-in-docker, go and other tools
 	// For more info about dev container Features see https://containers.dev/features
@@ -25,13 +24,13 @@
 	},
 
 	// Copy over welcome message 
-	// "onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
+	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
 
 	// Clone
-	"onCreateCommand": [
-		"mkdir -p $GOPATH/src/k8s.io && cd $GOPATH/src/k8s.io && git clone --depth=1 https://github.com/$GITHUB_USER/kubernetes.git",
+	"postCreateCommand": [
+		"mkdir -p /go/src && mkdir -p /go/src/k8s.io && cd /go/src/k8s.io && cp -R /workspaces/kubernetes /go/src/k8s.io/",
 		"cd /workspaces && git clone --depth=1 https://github.com/kubernetes/kubectl",
-		"mkdir -p $GOPATH/src && cd /go/src && git clone --depth=1 https://github.com/golang/term.git"
+		"cd /go/src && git clone --depth=1 https://github.com/golang/term.git"
 	],
 
 	// for Kubernetes testing, suppress extraneous forwarding messages
