@@ -25,10 +25,10 @@
 	},
 
 	// Copy over welcome message 
-	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
+	// "onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
 
 	// Clone
-	"postCreateCommand": [
+	"onCreateCommand": [
 		"mkdir -p $GOPATH/src/k8s.io && cd $GOPATH/src/k8s.io && git clone --depth=1 https://github.com/$GITHUB_USER/kubernetes.git",
 		"cd /workspaces && git clone --depth=1 https://github.com/kubernetes/kubectl",
 		"mkdir -p $GOPATH/src && cd /go/src && git clone --depth=1 https://github.com/golang/term.git"
