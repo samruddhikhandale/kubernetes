@@ -44,7 +44,7 @@
 
 	// Ensure that the host machine has enough resources to build and test Kubernetes
 	"hostRequirements": {
-		"cpus": 8
+		"cpus": 16
 	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
