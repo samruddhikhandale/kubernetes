@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/base:0-bullseye
+
+    volumes:
+      # Forwards the local Docker socket to the container.
+      - /var/run/docker.sock:/var/run/docker-host.sock 
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ../.:/go/src/k8s.io/kubernetes
+
+    # Overrides default command so things don't shut down after the process ends.
+    entrypoint: /usr/local/share/docker-init.sh
+    command: sleep infinity 
