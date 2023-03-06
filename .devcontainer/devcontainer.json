@@ -1,12 +1,12 @@
 // For format details, see https:https://containers.dev/implementors/spec/. For config options, see the README at:
 // https://github.com/devcontainers/images/tree/main/src/base-debian
 {
-	"name": "Debian",
+	"name": "Kubernetes",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/go/src/k8s.io/kubernetes",
 
-	// Install utils, docker-in-docker, go and other tools
+	// Install utils, docker-in-docker, and other tools
 	// For more info about dev container Features see https://containers.dev/features
 	"features": {
 		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
@@ -15,9 +15,6 @@
 			"minikube": "none"
 		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/devcontainers/features/go:1": {
-			"version": "1.19"
-		},
 		"ghcr.io/devcontainers/features/sshd:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
 		"ghcr.io/devcontainers/features/python:1": {},
@@ -26,7 +23,7 @@
 		"./local-features/kubetest2": {}
 	},
 
-	// Copy over welcome message 
+	// Copy over welcome message and install pyyaml
 	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt && python3 -m pip install --user --upgrade --no-cache-dir pyyaml",
 
 	// Clone
