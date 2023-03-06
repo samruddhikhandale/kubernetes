@@ -18,13 +18,14 @@
 		},
 		"ghcr.io/devcontainers/features/sshd:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/python:1": {},
 		"./local-features/kubectl-kind": {},
 		"./local-features/etcd": {},
-		"./local-features/kubetest2": {}  
+		"./local-features/kubetest2": {}
 	},
 
 	// Copy over welcome message 
-	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
+	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt && python3 -m pip install --user --upgrade --no-cache-dir pyyaml",
 
 	// Clone
 	"postCreateCommand": [
