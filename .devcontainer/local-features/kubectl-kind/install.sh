@@ -37,12 +37,15 @@ find_version_from_git_tags() {
             last_part="${escaped_separator}[0-9]+"
         fi
         local regex="${prefix}\\K[0-9]+${escaped_separator}[0-9]+${last_part}$"
-        local version_list="$(git ls-remote --tags ${repository} | grep -oP "${regex}" | tr -d ' ' | tr "${separator}" "." | sort -rV)"
+        # shellcheck disable=SC2155
+        local version_list="$(git ls-remote --tags "${repository}" | grep -oP "${regex}" | tr -d ' ' | tr "${separator}" "." | sort -rV)"
         if [ "${requested_version}" = "latest" ] || [ "${requested_version}" = "current" ] || [ "${requested_version}" = "lts" ]; then
+            # shellcheck disable=SC2086
             declare -g ${variable_name}="$(echo "${version_list}" | head -n 1)"
         else
             set +e
-            declare -g ${variable_name}="$(echo "${version_list}" | grep -E -m 1 "^${requested_version//./\\.}([\\.\\s]|$)")"
+                # shellcheck disable=SC2086
+                declare -g ${variable_name}="$(echo "${version_list}" | grep -E -m 1 "^${requested_version//./\\.}([\\.\\s]|$)")"
             set -e
         fi
     fi
@@ -62,7 +65,7 @@ find_version_from_git_tags KIND_VERSION "https://github.com/kubernetes-sigs/kind
 echo "Installing kind ${KIND_VERSION}..."
 
 # Install kind
-go install sigs.k8s.io/kind@v${KIND_VERSION}
+go install sigs.k8s.io/kind@v"${KIND_VERSION}"
 
 chown -R "${_REMOTE_USER}:golang" "${GOPATH}"
 chmod -R g+r+w "${GOPATH}"
