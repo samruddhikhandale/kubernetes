@@ -11,7 +11,8 @@
 	// For more info about dev container Features see https://containers.dev/features
 	"features": {
 		"ghcr.io/devcontainers/features/go:1": {
-			"version": "1.19"
+			"version": "1.19",
+			"username": "root"
 		},
 		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
 			"version": "latest",
@@ -49,11 +50,11 @@
 	// "hack/verify-typecheck.sh" test requires more CPUs, ensure you have larger machine type (ie 16 cores) to pass this test
 	"hostRequirements": {
 		"cpus": 8
-	}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root"
 }
