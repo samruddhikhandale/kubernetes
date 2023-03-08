@@ -3,13 +3,16 @@
 {
 	"name": "Kubernetes",
 	
-	"image": "mcr.microsoft.com/devcontainers/go:0-1.19",
+	"image": "mcr.microsoft.com/devcontainers/base:0-bullseye",
 	"workspaceFolder": "/go/src/k8s.io/kubernetes",
 	"workspaceMount": "source=${localWorkspaceFolder},target=/go/src/k8s.io/kubernetes,type=bind,consistency=cached",
 
 	// Install utils, docker-in-docker, and other tools
 	// For more info about dev container Features see https://containers.dev/features
 	"features": {
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "1.19"
+		},
 		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
 			"version": "latest",
 			"helm": "none",
