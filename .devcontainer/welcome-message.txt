@@ -2,6 +2,7 @@
 
 This environment uses a debian image with the kubernetes/kubernetes repo, with Docker, go, kubectl, kubetest2 and kind installed. 
 For more information about the debian dev container base image see https://github.com/devcontainers/images/tree/main/src/base-debian
+The configuration for the dev container is in the .devcontainer folder.
 
 🔍 To explore VS Code to its fullest, search using the Command Palette (Cmd/Ctrl + Shift + P or F1).
 
