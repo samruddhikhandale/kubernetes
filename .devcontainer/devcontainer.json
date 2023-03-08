@@ -7,7 +7,7 @@
 	"workspaceFolder": "/go/src/k8s.io/kubernetes",
 	"workspaceMount": "source=${localWorkspaceFolder},target=/go/src/k8s.io/kubernetes,type=bind,consistency=cached",
 
-	// Install utils, docker-in-docker, and other tools
+	// Install utils, go, docker-in-docker, and other tools
 	// For more info about dev container Features see https://containers.dev/features
 	"features": {
 		"ghcr.io/devcontainers/features/go:1": {
@@ -32,7 +32,7 @@
 
 	// Clone
 	"postCreateCommand": [
-		"cd /workspaces && git clone --depth=1 https://github.com/kubernetes/kubectl",
+		"sudo mkdir -p /go/src/sigs.k8s.io && cd /go/src/sigs.k8s.io && git clone --depth=1 https://github.com/kubernetes/kubectl",
 		"cd /go/src && git clone --depth=1 https://github.com/golang/term.git"
 	],
 
@@ -46,8 +46,9 @@
 	// },
 
 	// Ensure that the host machine has enough resources to build and test Kubernetes
+	// "hack/verify-typecheck.sh" test requires more CPUs, ensure you have larger machine type (ie 16 cores) to pass this test
 	"hostRequirements": {
-		"cpus": 16
+		"cpus": 8
 	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
