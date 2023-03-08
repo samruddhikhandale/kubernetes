@@ -29,22 +29,12 @@
 	},
 
 	// Copy over welcome message and install pyyaml
-	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt && python3 -m pip install --user --upgrade --no-cache-dir pyyaml",
-
-	// Clone
-	"postCreateCommand": [
-		"sudo mkdir -p /go/src/sigs.k8s.io && cd /go/src/sigs.k8s.io && git clone --depth=1 https://github.com/kubernetes/kubectl",
-		"cd /go/src && git clone --depth=1 https://github.com/golang/term.git"
-	],
+	"onCreateCommand": "bash .devcontainer/setup.sh",
 
 	// for Kubernetes testing, suppress extraneous forwarding messages
 	"otherPortsAttributes": {
 		"onAutoForward": "silent"
 	},
-
-	// Configure tool-specific properties.
-	// "customizations": {
-	// },
 
 	// Ensure that the host machine has enough resources to build and test Kubernetes
 	// "hack/verify-typecheck.sh" test requires more CPUs, ensure you have larger machine type (ie 16 cores) to pass this test
@@ -52,9 +42,12 @@
 		"cpus": 8
 	},
 
+	"remoteUser": "root"
+
+	// Configure tool-specific properties.
+	// "customizations": {
+	// },
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	"remoteUser": "root"
 }
