@@ -2,9 +2,10 @@
 // https://github.com/devcontainers/images/tree/main/src/base-debian
 {
 	"name": "Kubernetes",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "app",
+	
+	"image": "mcr.microsoft.com/devcontainers/go:0-1.19",
 	"workspaceFolder": "/go/src/k8s.io/kubernetes",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/go/src/k8s.io/kubernetes,type=bind,consistency=cached",
 
 	// Install utils, docker-in-docker, and other tools
 	// For more info about dev container Features see https://containers.dev/features
