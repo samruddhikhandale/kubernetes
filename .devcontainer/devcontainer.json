@@ -1,0 +1,53 @@
+// For format details, see https:https://containers.dev/implementors/spec/. For config options, see the README at:
+// https://github.com/devcontainers/images/tree/main/src/base-debian
+{
+	"name": "Kubernetes",
+	
+	"image": "mcr.microsoft.com/devcontainers/base:0-bullseye",
+	// "workspaceFolder": "/go/src/k8s.io/kubernetes",
+	// "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/k8s.io/kubernetes,type=bind,consistency=cached",
+
+	// Install utils, go, docker-in-docker, and other tools
+	// For more info about dev container Features see https://containers.dev/features
+	"features": {
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "1.19",
+			"username": "root"
+		},
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+			"version": "latest",
+			"helm": "none",
+			"minikube": "none"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/sshd:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/devcontainers/features/python:1": {}
+		// "./local-features/kubectl-kind": {},
+		// "./local-features/etcd": {},
+		// "./local-features/kubetest2": {}
+	},
+
+	// Copy over welcome message and install pyyaml
+	// "onCreateCommand": "bash .devcontainer/setup.sh",
+
+	// for Kubernetes testing, suppress extraneous forwarding messages
+	"otherPortsAttributes": {
+		"onAutoForward": "silent"
+	},
+
+	// Ensure that the host machine has enough resources to build and test Kubernetes
+	// "hack/verify-typecheck.sh" test requires more CPUs, ensure you have larger machine type (ie 16 cores) to pass this test
+	"hostRequirements": {
+		"cpus": 4
+	},
+
+	"remoteUser": "root"
+
+	// Configure tool-specific properties.
+	// "customizations": {
+	// },
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+}
