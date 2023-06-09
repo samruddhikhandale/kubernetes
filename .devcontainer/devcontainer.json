@@ -1,0 +1,48 @@
+// For more details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/devcontainers/images/tree/main/src/base-debian
+{
+	"name": "Debian",
+	"image": "mcr.microsoft.com/devcontainers/base:0-bullseye",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+			"version": "latest",
+			"helm": "none",
+			"minikube": "none"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/go:1": {
+			"version": "1.19"
+		},
+		"ghcr.io/devcontainers/features/sshd:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"./local-features/kubectl-kind": {},
+		"./local-features/etcd": {},
+		"./local-features/kubetest2": {}  
+	},
+
+	// Copy over welcome message 
+	"onCreateCommand": "sudo cp .devcontainer/welcome-message.txt /usr/local/etc/vscode-dev-containers/first-run-notice.txt",
+
+	// Clone the source for kubectl
+	"postCreateCommand": [
+		"git clone --depth=1 https://github.com/kubernetes/kubectl /workspaces"
+	],
+
+	// For Kubernetes testing, suppress meaningless forwarding messages
+	"otherPortsAttributes": {
+		"onAutoForward": "silent"
+	},
+
+	// Ensure that the host machine has enough resources to build and test Kubernetes
+	"hostRequirements": {
+		"cpus": 8
+	}
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
